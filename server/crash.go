@@ -64,7 +64,15 @@ func (s *Server) handleServerCrash() error {
 
 	// If the system is not configured to detect a clean exit code as a crash, and the
 	// crash is not the result of the program running out of memory, do nothing.
-	if (exitCode == 0 || exitCode == 137) && !oomKilled && !config.Get().System.CrashDetection.DetectCleanExitAsCrash {
+	if exitCode == 0 && !oomKilled && !config.Get().System.CrashDetection.DetectCleanExitAsCrash {
+		s.Log().Debug("server exited with successful exit code; system is configured to not detect this as a crash")
+		return nil
+	}
+	if exitCode == 137 {
+		s.Log().Debug("server exited with successful exit code; system is configured to not detect this as a crash")
+		return nil
+	}
+	if exitCode == 137 {
 		s.Log().Debug("server exited with successful exit code; system is configured to not detect this as a crash")
 		return nil
 	}
